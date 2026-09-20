@@ -1,0 +1,260 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum HospitalType {
+  GENERAL
+  SPECIALIZED
+  UNIVERSITY
+  CENTRAL
+}
+
+enum Role {
+  PATIENT
+  RECEPTION
+  DOCTOR
+  HOSPITAL_ADMIN
+  MINISTRY_ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum AppointmentStatus {
+  BOOKED
+  CONFIRMED
+  CHECKED_IN
+  IN_PROGRESS
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
+
+enum BookingSource {
+  WEB
+  RECEPTION
+  WAITLIST
+}
+
+enum PriorityLane {
+  NONE
+  ELDERLY
+  DISABILITY
+  PREGNANCY
+}
+
+enum WaitlistStatus {
+  WAITING
+  OFFERED
+  ACCEPTED
+  EXPIRED
+}
+
+enum NotificationChannel {
+  SMS_MOCK
+  INAPP
+}
+
+model Governorate {
+  id        String     @id @default(cuid())
+  code      String     @unique
+  nameAr    String
+  nameEn    String
+  lat       Float      @default(30.0444)
+  lng       Float      @default(31.2357)
+  hospitals Hospital[]
+  users     User[]
+}
+
+model Hospital {
+  id            String        @id @default(cuid())
+  governorateId String
+  nameAr        String
+  nameEn        String
+  type          HospitalType  @default(GENERAL)
+  address       String
+  lat           Float
+  lng           Float
+  phone         String
+  isActive      Boolean       @default(true)
+  governorate   Governorate   @relation(fields: [governorateId], references: [id])
+  clinics       Clinic[]
+  blackoutDays  BlackoutDay[]
+}
+
+model Specialty {
+  id         String   @id @default(cuid())
+  code       String   @unique
+  nameAr     String
+  nameEn     String
+  keywordsAr String[]
+  keywordsEn String[]
+  clinics    Clinic[]
+}
+
+model Clinic {
+  id              String          @id @default(cuid())
+  hospitalId      String
+  specialtyId     String
+  roomLabel       String
+  isActive        Boolean         @default(true)
+  hospital        Hospital        @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  specialty       Specialty       @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+  doctors         Doctor[]
+  slots           Slot[]
+  waitlistEntries WaitlistEntry[]
+
+  @@unique([hospitalId, specialtyId, roomLabel])
+}
+
+model User {
+  id              String          @id @default(cuid())
+  nationalId      String          @unique
+  phone           String
+  fullNameAr      String
+  fullNameEn      String
+  passwordHash    String
+  role            Role            @default(PATIENT)
+  birthDate       DateTime
+  gender          Gender
+  governorateId   String
+  hasDisability   Boolean         @default(false)
+  isPregnant      Boolean         @default(false)
+  locale          String          @default("ar")
+  governorate     Governorate     @relation(fields: [governorateId], references: [id])
+  doctor          Doctor?
+  appointments    Appointment[]
+  waitlistEntries WaitlistEntry[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Doctor {
+  id           String             @id @default(cuid())
+  userId       String             @unique
+  clinicId     String
+  title        String
+  licenseNo    String
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clinic       Clinic             @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  schedules    ScheduleTemplate[]
+  slots        Slot[]
+  blackoutDays BlackoutDay[]
+}
+
+model ScheduleTemplate {
+  id              String @id @default(cuid())
+  doctorId        String
+  weekday         Int // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  startTime       String // e.g. "09:00"
+  endTime         String // e.g. "14:00"
+  slotMinutes     Int    @default(15)
+  capacityPerSlot Int    @default(2)
+  doctor          Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, weekday, startTime])
+}
+
+model BlackoutDay {
+  id         String    @id @default(cuid())
+  hospitalId String?
+  doctorId   String?
+  date       DateTime
+  reason     String
+  hospital   Hospital? @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  doctor     Doctor?   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+}
+
+model Slot {
+  id                String          @id @default(cuid())
+  clinicId          String
+  doctorId          String
+  startsAt          DateTime
+  endsAt            DateTime
+  capacity          Int             @default(2)
+  bookedCount       Int             @default(0)
+  overbookAllowance Int             @default(0)
+  clinic            Clinic          @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  doctor            Doctor          @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  appointments      Appointment[]
+  waitlistOffers    WaitlistEntry[]
+
+  @@index([clinicId, startsAt])
+  @@index([doctorId, startsAt])
+}
+
+model Appointment {
+  id             String            @id @default(cuid())
+  patientId      String
+  slotId         String
+  status         AppointmentStatus @default(BOOKED)
+  ticketNo       String            @unique
+  queueNo        Int
+  source         BookingSource     @default(WEB)
+  priorityLane   PriorityLane      @default(NONE)
+  noShowRiskScore Float            @default(0.0)
+  outcomeNote    String?
+  createdAt      DateTime          @default(now())
+  checkedInAt    DateTime?
+  completedAt    DateTime?
+  patient        User              @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  slot           Slot              @relation(fields: [slotId], references: [id], onDelete: Cascade)
+
+  @@index([slotId])
+  @@index([patientId])
+  @@index([status])
+}
+
+model WaitlistEntry {
+  id             String         @id @default(cuid())
+  patientId      String
+  clinicId       String
+  preferredDate  DateTime
+  status         WaitlistStatus @default(WAITING)
+  offeredSlotId  String?
+  offerExpiresAt DateTime?
+  createdAt      DateTime       @default(now())
+  patient        User           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  clinic         Clinic         @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  offeredSlot    Slot?          @relation(fields: [offeredSlotId], references: [id], onDelete: SetNull)
+
+  @@index([clinicId, status])
+  @@index([patientId])
+}
+
+model Notification {
+  id      String              @id @default(cuid())
+  userId  String
+  channel NotificationChannel @default(INAPP)
+  title   String
+  body    String
+  sentAt  DateTime            @default(now())
+  readAt  DateTime?
+  user    User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String
+  meta      Json?
+  createdAt DateTime @default(now())
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([action])
+  @@index([entity, entityId])
+}

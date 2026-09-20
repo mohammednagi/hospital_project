@@ -1,0 +1,178 @@
+"use client";
+
+import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
+import { Link, useRouter } from "@/i18n/navigation";
+import { signIn } from "next-auth/react";
+import { TopNav } from "@/components/chrome/top-nav";
+import { Building2, ShieldCheck, Lock, AlertCircle, LogIn, Sparkles, Check } from "lucide-react";
+
+const DEMO_USERS = [
+  { role: "PATIENT", nameAr: "مواطن (أحمد حسن)", nameEn: "Citizen (Ahmed Hassan)", nid: "29501010101234", roleKey: "PATIENT" },
+  { role: "RECEPTION", nameAr: "استقبال (سارة محمد)", nameEn: "Reception (Sara Mohamed)", nid: "28805050105678", roleKey: "RECEPTION" },
+  { role: "DOCTOR", nameAr: "طبيب (د. طارق)", nameEn: "Doctor (Dr. Tarek)", nid: "28003030109012", roleKey: "DOCTOR" },
+  { role: "HOSPITAL_ADMIN", nameAr: "مدير مستشفى (م. خالد)", nameEn: "Hospital Admin (Khaled)", nid: "27511110103456", roleKey: "HOSPITAL_ADMIN" },
+  { role: "MINISTRY_ADMIN", nameAr: "مشرف وزارة (د. منى)", nameEn: "Ministry Admin (Dr. Mona)", nid: "27008080107890", roleKey: "MINISTRY_ADMIN" },
+];
+
+export default function LoginPage() {
+  const t = useTranslations("auth");
+  const tCommon = useTranslations("common");
+  const tRoles = useTranslations("roles");
+  const locale = useLocale();
+  const router = useRouter();
+
+  const [nationalId, setNationalId] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const result = await signIn("credentials", {
+        nationalId,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError(locale === "ar" ? "بيانات الدخول غير صحيحة. يرجى التأكد من الرقم القومي وكلمة المرور." : "Invalid credentials. Please check your National ID and password.");
+        setLoading(false);
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || "Failed to sign in");
+      setLoading(false);
+    }
+  };
+
+  const handleQuickFill = (nid: string) => {
+    setNationalId(nid);
+    setPassword("GovEgypt@2026");
+    setError(null);
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <TopNav user={null} />
+
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-md">
+          {/* Card */}
+          <div className="bg-card rounded-2xl border border-border p-6 sm:p-8 shadow-sm">
+            <div className="flex flex-col items-center text-center mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-3">
+                <Building2 className="w-6 h-6" />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                {t("loginTitle")}
+              </h1>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+                {t("loginSub")}
+              </p>
+            </div>
+
+            {error && (
+              <div className="mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
+                  {t("nationalId")}
+                </label>
+                <input
+                  type="text"
+                  maxLength={14}
+                  value={nationalId}
+                  onChange={(e) => setNationalId(e.target.value.replace(/\D/g, ""))}
+                  placeholder="29501010101234"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-input bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-foreground mb-1.5">
+                  {t("password")}
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-sm hover:bg-primary/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
+              >
+                {loading ? (
+                  <span>{tCommon("loading")}</span>
+                ) : (
+                  <>
+                    <LogIn className="w-4 h-4" />
+                    <span>{tCommon("login")}</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-6 pt-5 border-t border-border text-center">
+              <p className="text-xs text-muted-foreground">
+                {locale === "ar" ? "ليس لديك حساب مواطن؟" : "Don't have an account?"}{" "}
+                <Link href="/register" className="font-semibold text-primary hover:underline">
+                  {tCommon("register")}
+                </Link>
+              </p>
+            </div>
+
+            {/* Quick Demo Switcher */}
+            <div className="mt-6 pt-4 border-t border-border">
+              <div className="flex items-center gap-1.5 mb-2.5 text-xs font-semibold text-muted-foreground">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span>{t("demoAccounts")}</span>
+              </div>
+              <div className="grid grid-cols-1 gap-1.5">
+                {DEMO_USERS.map((du) => (
+                  <button
+                    key={du.role}
+                    type="button"
+                    onClick={() => handleQuickFill(du.nid)}
+                    className="w-full px-3 py-2 rounded-lg border border-border bg-muted/40 hover:bg-muted text-xs text-start flex items-center justify-between transition-colors cursor-pointer"
+                  >
+                    <div>
+                      <span className="font-semibold block text-foreground">
+                        {locale === "ar" ? du.nameAr : du.nameEn}
+                      </span>
+                      <span className="font-mono text-[11px] text-muted-foreground">
+                        {du.nid}
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-medium text-primary">
+                      {locale === "ar" ? "تعبئة سريعة" : "Auto-fill"}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}

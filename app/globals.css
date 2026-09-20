@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 217 91% 40%; /* Egypt Gov Blue */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 215 25% 93%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 215 20% 95%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 173 80% 36%; /* Medical Mint */
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 40%;
+    --radius: 0.75rem;
+
+    /* Semantic Health & Status Tokens */
+    --status-booked: 217 91% 60%;
+    --status-checkedin: 173 80% 36%;
+    --status-inprogress: 38 92% 50%;
+    --status-completed: 142 76% 36%;
+    --status-noshow: 0 84% 60%;
+    --status-cancelled: 215 16% 47%;
+
+    /* Translucent Chrome Backgrounds */
+    --chrome-bg: rgba(255, 255, 255, 0.82);
+    --chrome-border: rgba(226, 232, 240, 0.7);
+
+    /* Fonts & Typography */
+    --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Naskh Arabic", sans-serif;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+    --card: 224 71% 7%;
+    --card-foreground: 213 31% 91%;
+    --popover: 224 71% 7%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 173 80% 40%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 217 91% 60%;
+
+    --chrome-bg: rgba(15, 23, 42, 0.82);
+    --chrome-border: rgba(30, 41, 59, 0.7);
+  }
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  font-family: var(--font-system);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Headings: tighter letter-spacing, line-height 1.05 */
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  font-weight: 700;
+}
+
+/* Arabic body line-height 1.6, 0 letter-spacing */
+[dir="rtl"] body,
+[dir="rtl"] p,
+[dir="rtl"] span,
+[dir="rtl"] button,
+[dir="rtl"] input,
+[dir="rtl"] select,
+[dir="rtl"] textarea {
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+/* Interactive touch target & active feedback */
+button,
+a[role="button"],
+input[type="button"],
+input[type="submit"] {
+  min-height: 2.75rem; /* 44px minimum */
+  touch-action: manipulation;
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), background-color 0.15s ease, opacity 0.15s ease;
+}
+
+button:active,
+a[role="button"]:active {
+  transform: scale(0.97);
+}
+
+/* Translucent frosted glass effect for top nav & bottom bar */
+.chrome-translucent {
+  background-color: var(--chrome-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: var(--chrome-border);
+}
+
+/* Focus rings with accessible contrast */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Honors user preference for reduced transparency */
+@media (prefers-reduced-transparency: reduce) {
+  .chrome-translucent {
+    background-color: hsl(var(--background));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
