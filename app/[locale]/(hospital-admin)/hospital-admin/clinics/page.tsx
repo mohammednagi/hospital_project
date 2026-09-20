@@ -7,7 +7,6 @@ import {
   Building2,
   Calendar,
   Clock,
-  Plus,
   Sparkles,
   CheckCircle2,
   AlertCircle,
@@ -121,22 +120,22 @@ export default function HospitalAdminClinicsPage() {
   const currentHosp = hospitals.find((h) => h.id === selectedHospitalId);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <TopNav user={{ id: "admin", role: "HOSPITAL_ADMIN", fullNameAr: "م. خالد مصطفى", fullNameEn: "Khaled Mostafa" }} />
+    <div className="min-h-screen flex flex-col bg-background pb-12">
+      <TopNav user={{ id: "admin", role: "HOSPITAL_ADMIN", fullNameAr: "د. مروان فتحي البهنساوي", fullNameEn: "Dr. Marwan El-Behairy" }} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
         {/* Header and Switcher */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-200">
                 {tRoles("HOSPITAL_ADMIN")}
               </span>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                 {t("dashboardTitle")}
               </h1>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs sm:text-sm text-muted-foreground">
               {currentHosp
                 ? `${isRtl ? currentHosp.nameAr : currentHosp.nameEn} - ${currentHosp.address}`
                 : ""}
@@ -147,7 +146,7 @@ export default function HospitalAdminClinicsPage() {
             <select
               value={selectedHospitalId}
               onChange={(e) => setSelectedHospitalId(e.target.value)}
-              className="px-3.5 py-2 rounded-xl border border-input bg-card text-foreground text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
+              className="px-4 py-2 min-h-[44px] rounded-full border border-input bg-card text-foreground text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer shadow-xs"
             >
               {hospitals.map((h) => (
                 <option key={h.id} value={h.id}>
@@ -158,7 +157,7 @@ export default function HospitalAdminClinicsPage() {
 
             <button
               onClick={() => setShowBlackoutModal(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-border bg-card text-foreground text-xs font-semibold hover:bg-secondary transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full border border-border bg-card text-foreground text-xs font-bold hover:bg-secondary transition-all cursor-pointer active:scale-95"
             >
               <Ban className="w-3.5 h-3.5 text-destructive" />
               <span>{t("blackoutsTab")}</span>
@@ -168,7 +167,7 @@ export default function HospitalAdminClinicsPage() {
             <button
               onClick={handleGenerateSlots}
               disabled={generating}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold shadow-xs hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-full bg-primary text-primary-foreground text-xs font-bold shadow-xs hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
             >
               <Sparkles className="w-4 h-4" />
               <span>{generating ? tCommon("loading") : t("generateSlotsBtn")}</span>
@@ -177,8 +176,8 @@ export default function HospitalAdminClinicsPage() {
         </div>
 
         {genSuccess !== null && (
-          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 text-teal-950 text-xs font-semibold flex items-center gap-2.5">
+            <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
             <span>
               {locale === "ar"
                 ? `تم توليد المواعيد بنجاح! أضيف ${genSuccess} موعداً جديداً غير مكرر للأسبوعين القادمين.`
@@ -188,7 +187,7 @@ export default function HospitalAdminClinicsPage() {
         )}
 
         {/* Hospital Utilization & Doctor Load Table */}
-        <div className="bg-card rounded-2xl border border-border p-6 shadow-xs space-y-4">
+        <div className="bg-card rounded-3xl border border-border p-6 shadow-xs space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-border">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-primary" />
@@ -196,7 +195,7 @@ export default function HospitalAdminClinicsPage() {
                 {isRtl ? "معدلات إشغال العيادات وعمق قائمة الانتظار" : "Clinic Utilization & Waitlist Depth"}
               </h2>
             </div>
-            <span className="text-xs text-muted-foreground font-mono">
+            <span className="text-xs text-muted-foreground font-mono font-bold bg-secondary px-2.5 py-0.5 rounded-full">
               14-Day Capacity
             </span>
           </div>
@@ -205,51 +204,51 @@ export default function HospitalAdminClinicsPage() {
             <table className="w-full text-xs text-start">
               <thead>
                 <tr className="border-b border-border text-muted-foreground">
-                  <th className="py-2.5 px-3 text-start font-bold">العيادة والتخصص</th>
-                  <th className="py-2.5 px-3 text-start font-bold">رقم الغرفة</th>
-                  <th className="py-2.5 px-3 text-center font-bold">السعة المتاحة</th>
-                  <th className="py-2.5 px-3 text-center font-bold">الحجوزات المؤكدة</th>
-                  <th className="py-2.5 px-3 text-center font-bold">نسبة الإشغال</th>
-                  <th className="py-2.5 px-3 text-center font-bold">قائمة الانتظار</th>
+                  <th className="py-3 px-3 text-start font-bold">العيادة والتخصص</th>
+                  <th className="py-3 px-3 text-start font-bold">رقم الغرفة</th>
+                  <th className="py-3 px-3 text-center font-bold">السعة المتاحة</th>
+                  <th className="py-3 px-3 text-center font-bold">الحجوزات المؤكدة</th>
+                  <th className="py-3 px-3 text-center font-bold">نسبة الإشغال</th>
+                  <th className="py-3 px-3 text-center font-bold">قائمة الانتظار</th>
                 </tr>
               </thead>
               <tbody>
                 {clinicsData.map((c) => (
                   <tr
                     key={c.id}
-                    className="border-b border-border/50 hover:bg-muted/10 transition-colors"
+                    className="border-b border-border/40 hover:bg-secondary/30 transition-colors"
                   >
-                    <td className="py-3 px-3 font-semibold text-foreground">
+                    <td className="py-3.5 px-3 font-bold text-foreground">
                       {isRtl ? c.specialtyNameAr : c.specialtyNameEn}
                     </td>
-                    <td className="py-3 px-3 text-muted-foreground font-mono">
+                    <td className="py-3.5 px-3 text-muted-foreground font-mono tabular-nums">
                       {c.roomLabel}
                     </td>
-                    <td className="py-3 px-3 text-center font-mono font-bold">
+                    <td className="py-3.5 px-3 text-center font-mono font-bold tabular-nums">
                       {c.totalCapacity}
                     </td>
-                    <td className="py-3 px-3 text-center font-mono font-bold text-primary">
+                    <td className="py-3.5 px-3 text-center font-mono font-bold text-primary tabular-nums">
                       {c.totalBooked}
                     </td>
-                    <td className="py-3 px-3 text-center">
+                    <td className="py-3.5 px-3 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <div className="w-16 h-2 rounded-full bg-secondary overflow-hidden">
                           <div
-                            className={`h-full ${
+                            className={`h-full rounded-full ${
                               c.utilizationPct > 90
                                 ? "bg-rose-500"
                                 : c.utilizationPct > 70
                                 ? "bg-amber-500"
-                                : "bg-emerald-500"
+                                : "bg-teal-500"
                             }`}
                             style={{ width: `${Math.min(100, c.utilizationPct)}%` }}
                           />
                         </div>
-                        <span className="font-mono font-bold">{c.utilizationPct}%</span>
+                        <span className="font-mono font-bold tabular-nums">{c.utilizationPct}%</span>
                       </div>
                     </td>
-                    <td className="py-3 px-3 text-center">
-                      <span className="font-mono px-2 py-0.5 rounded-full bg-muted text-foreground font-bold">
+                    <td className="py-3.5 px-3 text-center">
+                      <span className="font-mono px-2.5 py-0.5 rounded-full bg-secondary text-foreground font-bold tabular-nums">
                         {c.waitlistDepth}
                       </span>
                     </td>
@@ -262,8 +261,8 @@ export default function HospitalAdminClinicsPage() {
 
         {/* Blackout Modal */}
         {showBlackoutModal && (
-          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-card rounded-2xl border border-border p-6 max-w-sm w-full space-y-4 shadow-xl">
+          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-card rounded-3xl border border-border p-6 max-w-sm w-full space-y-4 shadow-xl">
               <div className="flex items-center justify-between pb-2 border-b border-border">
                 <div className="flex items-center gap-2">
                   <Ban className="w-5 h-5 text-destructive" />
@@ -274,15 +273,15 @@ export default function HospitalAdminClinicsPage() {
                 <button
                   type="button"
                   onClick={() => setShowBlackoutModal(false)}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="p-1 rounded-md text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               {blackoutSuccess ? (
-                <div className="p-4 text-center text-xs text-emerald-700 space-y-1">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-600 mx-auto" />
+                <div className="p-4 text-center text-xs text-teal-700 space-y-1">
+                  <CheckCircle2 className="w-6 h-6 text-teal-600 mx-auto" />
                   <p className="font-bold">تم تسجيل يوم العطلة بنجاح</p>
                 </div>
               ) : (
@@ -295,7 +294,7 @@ export default function HospitalAdminClinicsPage() {
                       type="date"
                       value={blackoutDate}
                       onChange={(e) => setBlackoutDate(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-input bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-input bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
                       required
                     />
                   </div>
@@ -309,7 +308,7 @@ export default function HospitalAdminClinicsPage() {
                       value={blackoutReason}
                       onChange={(e) => setBlackoutReason(e.target.value)}
                       placeholder={isRtl ? "مثال: عطلة رسمية / صيانة دورية للعيادات" : "e.g. National holiday / Maintenance"}
-                      className="w-full px-3 py-2 rounded-xl border border-input bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/30"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-input bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/40"
                       required
                     />
                   </div>
@@ -318,14 +317,14 @@ export default function HospitalAdminClinicsPage() {
                     <button
                       type="button"
                       onClick={() => setShowBlackoutModal(false)}
-                      className="w-1/2 py-2.5 rounded-xl border border-border bg-card text-foreground text-xs font-semibold hover:bg-secondary cursor-pointer"
+                      className="w-1/2 py-2.5 min-h-[44px] rounded-full border border-border bg-card text-foreground text-xs font-semibold hover:bg-secondary cursor-pointer active:scale-95"
                     >
                       {tCommon("cancel")}
                     </button>
                     <button
                       type="submit"
                       disabled={blackoutSubmitting}
-                      className="w-1/2 py-2.5 rounded-xl bg-destructive text-destructive-foreground text-xs font-bold hover:bg-destructive/90 cursor-pointer disabled:opacity-50"
+                      className="w-1/2 py-2.5 min-h-[44px] rounded-full bg-destructive text-destructive-foreground text-xs font-bold hover:bg-destructive/90 cursor-pointer disabled:opacity-50 active:scale-95"
                     >
                       {blackoutSubmitting ? tCommon("loading") : (isRtl ? "تأكيد الإغلاق" : "Save Blackout")}
                     </button>

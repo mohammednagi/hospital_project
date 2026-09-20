@@ -2,66 +2,81 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    /* Civic Deep Teal Palette & Warm Hospital Paper */
+    --background: 40 20% 98%; /* Warm hospital paper #FBFBFA */
+    --foreground: 165 30% 12%; /* Deep charcoal teal */
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 165 30% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 217 91% 40%; /* Egypt Gov Blue */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 215 25% 93%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 215 20% 95%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 173 80% 36%; /* Medical Mint */
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 217 91% 40%;
-    --radius: 0.75rem;
+    --popover-foreground: 165 30% 12%;
 
-    /* Semantic Health & Status Tokens */
+    /* Civic Deep Teal #0F6E56 */
+    --primary: 165 76% 25%;
+    --primary-foreground: 40 20% 98%;
+
+    --secondary: 40 15% 93%;
+    --secondary-foreground: 165 30% 12%;
+    --muted: 40 12% 94%;
+    --muted-foreground: 165 10% 42%;
+
+    /* Warm Sand / Amber Ticket Accent #C8892B */
+    --accent: 35 65% 48%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Semantic Red for No-Show / Cancel Only */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 15% 88%;
+    --input: 40 15% 88%;
+    --ring: 165 76% 25%;
+    --radius: 0.75rem; /* 12px card radius */
+
+    /* Semantic Status Tokens */
     --status-booked: 217 91% 60%;
-    --status-checkedin: 173 80% 36%;
-    --status-inprogress: 38 92% 50%;
+    --status-checkedin: 165 76% 25%;
+    --status-inprogress: 35 65% 48%;
     --status-completed: 142 76% 36%;
-    --status-noshow: 0 84% 60%;
-    --status-cancelled: 215 16% 47%;
+    --status-noshow: 0 72% 51%;
+    --status-cancelled: 165 10% 42%;
 
     /* Translucent Chrome Backgrounds */
-    --chrome-bg: rgba(255, 255, 255, 0.82);
-    --chrome-border: rgba(226, 232, 240, 0.7);
+    --chrome-bg: rgba(251, 251, 250, 0.82);
+    --chrome-border: rgba(200, 205, 200, 0.45);
 
-    /* Fonts & Typography */
-    --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Naskh Arabic", sans-serif;
+    /* Typography */
+    --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Naskh Arabic", "Cairo", sans-serif;
   }
 
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
-    --card: 224 71% 7%;
-    --card-foreground: 213 31% 91%;
-    --popover: 224 71% 7%;
-    --popover-foreground: 213 31% 91%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 215 28% 17%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 215 28% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 173 80% 40%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 217 91% 60%;
+    --background: 165 14% 8%;
+    --foreground: 40 15% 92%;
+    --card: 165 14% 11%;
+    --card-foreground: 40 15% 92%;
+    --popover: 165 14% 11%;
+    --popover-foreground: 40 15% 92%;
 
-    --chrome-bg: rgba(15, 23, 42, 0.82);
-    --chrome-border: rgba(30, 41, 59, 0.7);
+    /* Civic Teal Mint #4CC9A6 */
+    --primary: 163 53% 54%;
+    --primary-foreground: 165 30% 8%;
+
+    --secondary: 165 12% 16%;
+    --secondary-foreground: 40 15% 92%;
+    --muted: 165 12% 16%;
+    --muted-foreground: 165 10% 65%;
+
+    --accent: 35 65% 54%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 65% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 165 12% 18%;
+    --input: 165 12% 18%;
+    --ring: 163 53% 54%;
+
+    --chrome-bg: rgba(18, 23, 22, 0.82);
+    --chrome-border: rgba(45, 55, 52, 0.45);
   }
 }
 
@@ -71,6 +86,7 @@
 
 html {
   font-family: var(--font-system);
+  font-size: 17px; /* 17px Apple base body size */
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -85,14 +101,14 @@ html {
   text-align: left;
 }
 
-/* Headings: tighter letter-spacing, line-height 1.05 */
+/* Headings: tighter letter-spacing, line-height 1.1 */
 h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
-  line-height: 1.05;
+  line-height: 1.1;
   font-weight: 700;
 }
 
-/* Arabic body line-height 1.6, 0 letter-spacing */
+/* Arabic body line-height 1.7 for calm readability */
 [dir="rtl"] body,
 [dir="rtl"] p,
 [dir="rtl"] span,
@@ -100,16 +116,16 @@ h1, h2, h3, h4, h5, h6 {
 [dir="rtl"] input,
 [dir="rtl"] select,
 [dir="rtl"] textarea {
-  line-height: 1.6;
+  line-height: 1.7;
   letter-spacing: 0;
 }
 
-/* Interactive touch target & active feedback */
+/* Interactive touch target & active physical response */
 button,
 a[role="button"],
 input[type="button"],
 input[type="submit"] {
-  min-height: 2.75rem; /* 44px minimum */
+  min-height: 2.75rem; /* 44px minimum touch target */
   touch-action: manipulation;
   transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), background-color 0.15s ease, opacity 0.15s ease;
 }
@@ -119,12 +135,50 @@ a[role="button"]:active {
   transform: scale(0.97);
 }
 
+/* Primary Action Pill styling */
+.btn-primary-pill {
+  border-radius: 9999px;
+  min-height: 2.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1), background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-primary-pill:active {
+  transform: scale(0.97);
+}
+
 /* Translucent frosted glass effect for top nav & bottom bar */
 .chrome-translucent {
   background-color: var(--chrome-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-color: var(--chrome-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Scroll-edge mask gradient to replace hard hairline borders */
+.scroll-edge-fade-bottom {
+  mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent 100%);
+}
+
+.scroll-edge-fade-top {
+  mask-image: linear-gradient(to top, black calc(100% - 24px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black calc(100% - 24px), transparent 100%);
+}
+
+/* Tabular figures for codes, queue digits, times */
+.tabular-numbers {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Physical Boarding Ticket styling */
+.ticket-perforation {
+  position: relative;
+  background-image: radial-gradient(circle at 0px 50%, transparent 10px, hsl(var(--card)) 10.5px),
+                    radial-gradient(circle at 100% 50%, transparent 10px, hsl(var(--card)) 10.5px);
 }
 
 /* Focus rings with accessible contrast */
@@ -139,5 +193,23 @@ a[role="button"]:active {
     background-color: hsl(var(--background));
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+}
+
+/* Clean print stylesheet for physical tickets */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print, header, nav, footer, .chrome-translucent {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .ticket-card {
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
   }
 }

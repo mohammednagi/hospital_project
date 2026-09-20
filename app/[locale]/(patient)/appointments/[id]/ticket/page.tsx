@@ -6,18 +6,17 @@ import { Link } from "@/i18n/navigation";
 import { TopNav } from "@/components/chrome/top-nav";
 import { MobileBottomBar } from "@/components/chrome/mobile-bottom-bar";
 import {
-  Calendar,
-  Clock,
-  Building2,
-  MapPin,
   Printer,
   Download,
   ShieldCheck,
   User,
   ArrowRight,
   ArrowLeft,
-  CheckCircle2,
   QrCode,
+  Building2,
+  Clock,
+  Calendar,
+  Sparkles,
 } from "lucide-react";
 
 export default function AppointmentTicketPage({
@@ -77,7 +76,7 @@ export default function AppointmentTicketPage({
       <div className="min-h-screen flex flex-col bg-background">
         <TopNav user={null} />
         <main className="flex-1 flex items-center justify-center p-4">
-          <p className="text-xs text-muted-foreground animate-pulse">{tCommon("loading")}</p>
+          <p className="text-sm font-medium text-muted-foreground animate-pulse">{tCommon("loading")}</p>
         </main>
       </div>
     );
@@ -89,8 +88,8 @@ export default function AppointmentTicketPage({
         <TopNav user={null} />
         <main className="flex-1 flex items-center justify-center p-4">
           <div className="p-6 rounded-2xl bg-card border border-border text-center max-w-sm">
-            <p className="text-xs text-destructive mb-4">{error || "Ticket not found"}</p>
-            <Link href="/appointments" className="text-xs text-primary font-bold hover:underline">
+            <p className="text-sm text-destructive mb-4">{error || "Ticket not found"}</p>
+            <Link href="/appointments" className="text-sm text-primary font-bold hover:underline">
               {tCommon("appointments")}
             </Link>
           </div>
@@ -107,17 +106,17 @@ export default function AppointmentTicketPage({
   const startDate = new Date(slot.startsAt);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background pb-16 md:pb-0">
+    <div className="min-h-screen flex flex-col bg-background pb-20 md:pb-8">
       <div className="print:hidden">
         <TopNav user={null} />
       </div>
 
-      <main className="flex-1 max-w-xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* Breadcrumb / Back Action */}
+      <main className="flex-1 max-w-lg w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+        {/* Actions Bar */}
         <div className="flex items-center justify-between print:hidden">
           <Link
             href="/appointments"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors cursor-pointer min-h-[44px]"
           >
             <ArrowIcon className="w-4 h-4 rotate-180" />
             <span>{tCommon("appointments")}</span>
@@ -126,123 +125,135 @@ export default function AppointmentTicketPage({
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-semibold hover:bg-secondary transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-full border border-border bg-card text-xs font-bold hover:bg-secondary transition-colors cursor-pointer active:scale-95"
             >
-              <Printer className="w-3.5 h-3.5 text-primary" />
+              <Printer className="w-4 h-4 text-primary" />
               <span>{t("printTicket")}</span>
             </button>
             <button
               onClick={handleDownloadICS}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-full bg-accent text-accent-foreground text-xs font-bold hover:bg-accent/90 transition-colors cursor-pointer active:scale-95"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-4 h-4" />
               <span>{t("downloadIcs")}</span>
             </button>
           </div>
         </div>
 
-        {/* Printable Ticket Card */}
-        <div className="bg-card rounded-2xl border-2 border-primary/30 overflow-hidden shadow-lg print:border-black print:shadow-none">
-          {/* Ticket Header */}
-          <div className="p-6 bg-primary text-primary-foreground flex items-center justify-between print:bg-gray-100 print:text-black">
+        {/* Physical Boarding Ticket Card */}
+        <div className="ticket-card bg-card rounded-3xl border border-border shadow-md overflow-hidden relative print:shadow-none print:border-2 print:border-black">
+          {/* Top Notch & Header */}
+          <div className="p-6 bg-primary text-primary-foreground flex items-center justify-between">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-accent" />
-                <span className="text-[11px] font-bold tracking-wide uppercase">
+                <span className="text-[11px] font-bold tracking-wider uppercase opacity-90">
                   {tCommon("ministryName")}
                 </span>
               </div>
-              <h1 className="text-xl font-extrabold tracking-tight">
+              <h1 className="text-xl font-bold tracking-tight">
                 {t("ticketIssued")}
               </h1>
             </div>
 
             <div className="text-end">
               <span className="text-[10px] opacity-80 block">{t("ticketNo")}</span>
-              <span className="font-mono text-sm sm:text-base font-extrabold tracking-wider">
+              <span className="font-mono text-sm sm:text-base font-extrabold tracking-wider tabular-nums">
                 {appointment.ticketNo}
               </span>
             </div>
           </div>
 
-          {/* Ticket Body */}
-          <div className="p-6 space-y-6">
-            {/* Queue Number Highlight Box */}
-            <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-start">
-              <div>
-                <span className="text-xs text-muted-foreground block mb-1">
-                  {t("queueNo")}
-                </span>
-                <span className="text-4xl font-extrabold text-primary font-mono">
-                  #{appointment.queueNo}
-                </span>
-                {appointment.priorityLane !== "NONE" && (
-                  <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800 border border-purple-200">
-                    {tPriority(appointment.priorityLane)}
-                  </span>
-                )}
-              </div>
-
-              {/* QR Code */}
-              {qrDataUrl && (
-                <div className="p-2 rounded-xl bg-white border border-border shrink-0 shadow-xs">
-                  <img
-                    src={qrDataUrl}
-                    alt="Ticket QR Code"
-                    className="w-32 h-32 object-contain"
-                  />
-                  <span className="text-[9px] text-gray-500 font-mono text-center block mt-1">
-                    {appointment.id.slice(0, 10)}
-                  </span>
-                </div>
-              )}
+          {/* Large Arm's Length Queue Highlight */}
+          <div className="p-6 text-center border-b border-border bg-gradient-to-b from-primary/5 to-transparent">
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1">
+              {t("queueNo")}
+            </span>
+            <div className="text-5xl sm:text-6xl font-extrabold text-primary font-mono tabular-nums tracking-tight">
+              #{appointment.queueNo}
             </div>
 
-            {/* Visit Details Grid */}
-            <div className="grid grid-cols-2 gap-4 text-xs">
-              <div className="p-3 rounded-xl bg-muted/40 border border-border">
-                <span className="text-muted-foreground block text-[11px] mb-1">
+            {appointment.priorityLane !== "NONE" && (
+              <div className="mt-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-accent/20 text-accent-foreground border border-accent/30">
+                  <Sparkles className="w-3.5 h-3.5 text-accent" />
+                  <span>{tPriority(appointment.priorityLane)}</span>
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Perforation & Cutout Line */}
+          <div className="relative py-2 flex items-center justify-center">
+            <div className="w-full border-t-2 border-dashed border-border" />
+            <div className="absolute start-0 -translate-x-1/2 w-5 h-5 rounded-full bg-background border border-border" />
+            <div className="absolute end-0 translate-x-1/2 w-5 h-5 rounded-full bg-background border border-border" />
+          </div>
+
+          {/* Centered QR Code */}
+          <div className="px-6 py-4 flex flex-col items-center justify-center bg-card">
+            {qrDataUrl && (
+              <div className="p-3 rounded-2xl bg-white border-2 border-primary/20 shadow-xs flex flex-col items-center">
+                <img
+                  src={qrDataUrl}
+                  alt="Boarding Pass QR Code"
+                  className="w-36 h-36 object-contain"
+                />
+                <span className="text-[10px] font-mono text-gray-500 font-bold mt-1">
+                  {appointment.id.slice(0, 12)}
+                </span>
+              </div>
+            )}
+            <p className="text-[11px] text-muted-foreground mt-2 font-medium">
+              {isRtl ? "امسح الرمز عند شباك الاستقبال لتسجيل الحضور" : "Scan at reception desk for check-in"}
+            </p>
+          </div>
+
+          {/* Visit Details Grid */}
+          <div className="p-6 pt-2 space-y-4">
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="p-3.5 rounded-xl bg-secondary/50 border border-border">
+                <span className="text-muted-foreground block text-[11px] mb-1 font-medium">
                   {tCommon("hospital")}
                 </span>
-                <span className="font-bold text-foreground block">
+                <span className="font-bold text-foreground block text-sm">
                   {isRtl ? hospital.nameAr : hospital.nameEn}
                 </span>
-                <span className="text-muted-foreground text-[10px] mt-0.5 block">
+                <span className="text-muted-foreground text-[10px] mt-0.5 block truncate">
                   {hospital.address}
                 </span>
               </div>
 
-              <div className="p-3 rounded-xl bg-muted/40 border border-border">
-                <span className="text-muted-foreground block text-[11px] mb-1">
+              <div className="p-3.5 rounded-xl bg-secondary/50 border border-border">
+                <span className="text-muted-foreground block text-[11px] mb-1 font-medium">
                   {tCommon("clinic")}
                 </span>
-                <span className="font-bold text-foreground block">
+                <span className="font-bold text-foreground block text-sm">
                   {isRtl ? clinic.specialty.nameAr : clinic.specialty.nameEn}
                 </span>
-                <span className="text-muted-foreground text-[10px] mt-0.5 block">
+                <span className="text-primary font-bold text-[11px] mt-0.5 block">
                   {clinic.roomLabel}
                 </span>
               </div>
 
-              <div className="p-3 rounded-xl bg-muted/40 border border-border">
-                <span className="text-muted-foreground block text-[11px] mb-1">
+              <div className="p-3.5 rounded-xl bg-secondary/50 border border-border">
+                <span className="text-muted-foreground block text-[11px] mb-1 font-medium">
                   {tCommon("date")}
                 </span>
-                <span className="font-bold text-foreground block">
+                <span className="font-bold text-foreground block text-sm">
                   {startDate.toLocaleDateString(isRtl ? "ar-EG" : "en-US", {
-                    weekday: "long",
-                    year: "numeric",
+                    weekday: "short",
                     month: "short",
                     day: "numeric",
                   })}
                 </span>
               </div>
 
-              <div className="p-3 rounded-xl bg-muted/40 border border-border">
-                <span className="text-muted-foreground block text-[11px] mb-1">
+              <div className="p-3.5 rounded-xl bg-secondary/50 border border-border">
+                <span className="text-muted-foreground block text-[11px] mb-1 font-medium">
                   {tCommon("time")}
                 </span>
-                <span className="font-bold text-primary block text-sm font-mono">
+                <span className="font-bold text-primary block text-sm font-mono tabular-nums">
                   {startDate.toLocaleTimeString(isRtl ? "ar-EG" : "en-US", {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -251,25 +262,25 @@ export default function AppointmentTicketPage({
               </div>
             </div>
 
-            {/* Patient Credentials */}
-            <div className="pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+            {/* Citizen Info Strip */}
+            <div className="p-3.5 rounded-xl bg-secondary/40 border border-border flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4 text-primary" />
                 <span className="font-bold text-foreground">
                   {isRtl ? patient.fullNameAr : patient.fullNameEn}
                 </span>
               </div>
-              <div className="font-mono text-[11px]">
+              <div className="font-mono text-xs font-semibold tabular-nums text-muted-foreground">
                 {patient.nationalId}
               </div>
             </div>
           </div>
 
-          {/* Ticket Footer Instructions */}
-          <div className="p-4 bg-muted/40 border-t border-border text-center text-[11px] text-muted-foreground">
+          {/* Ticket Footer Notes */}
+          <div className="p-4 bg-secondary/30 border-t border-border text-center text-[11px] text-muted-foreground leading-relaxed">
             {isRtl
-              ? "يرجى التواجد بالعيادة قبل الموعد بـ 15 دقيقة وإبراز رمز QR عند شباك الاستقبال لتسجيل الحضور."
-              : "Please arrive 15 minutes before your slot and present this QR code at the reception desk for check-in."}
+              ? "يرجى التواجد قبل الموعد بـ 15 دقيقة. هذه التذكرة معتمدة من وزارة الصحة والسكان."
+              : "Please arrive 15 minutes before your appointment. Certified by MoHP."}
           </div>
         </div>
       </main>

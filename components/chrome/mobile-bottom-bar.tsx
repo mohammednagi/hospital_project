@@ -16,8 +16,8 @@ export function MobileBottomBar() {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 chrome-translucent border-t border-border px-3 py-2">
-      <div className="grid grid-cols-4 gap-1 items-center justify-around">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 chrome-translucent shadow-[0_-2px_10px_rgba(0,0,0,0.05)] px-3 py-1.5 pb-safe">
+      <div className="grid grid-cols-4 gap-1 items-center justify-around max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive =
@@ -27,8 +27,8 @@ export function MobileBottomBar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center py-1 rounded-lg text-[11px] font-medium transition-colors ${
-                isActive ? "text-primary font-bold" : "text-muted-foreground hover:text-foreground"
+              className={`flex flex-col items-center justify-center min-h-[48px] py-1 rounded-2xl text-[11px] font-semibold transition-transform active:scale-95 ${
+                isActive ? "text-primary font-bold bg-primary/10" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon className={`w-5 h-5 mb-0.5 ${isActive ? "text-primary stroke-[2.5]" : "stroke-[1.75]"}`} />

@@ -12,11 +12,10 @@ import {
   FileText,
   PhoneCall,
   UserX,
-  ShieldAlert,
   ArrowRight,
   ArrowLeft,
-  Timer,
-  Building2,
+  Sparkles,
+  ChevronRight,
 } from "lucide-react";
 
 export default function DoctorQueuePage() {
@@ -89,7 +88,7 @@ export default function DoctorQueuePage() {
 
       if (res.ok) {
         setMessage({
-          text: locale === "ar" ? "تم النداء على المريض وبدء الكشف" : "Patient called to examination room",
+          text: locale === "ar" ? "تم استدعاء المريض لغرفة الكشف" : "Patient called into consultation room",
           type: "success",
         });
         fetchQueue();
@@ -119,7 +118,7 @@ export default function DoctorQueuePage() {
 
       if (res.ok) {
         setMessage({
-          text: locale === "ar" ? "تم إتمام الكشف بنجاح وتسجيل التقرير" : "Consultation completed successfully",
+          text: locale === "ar" ? "تم إتمام الكشف بنجاح وحفظ التقرير الطبي" : "Consultation completed & medical report saved",
           type: "success",
         });
         fetchQueue();
@@ -160,39 +159,42 @@ export default function DoctorQueuePage() {
     }
   };
 
-  // Calculate 15 min grace period for a given slot start time
+  // Calculate 15 min grace period with percentage for SVG circle
   const getGraceStatus = (slotStartsAt: string | Date) => {
     const start = new Date(slotStartsAt);
     const elapsedMinutes = (currentTime.getTime() - start.getTime()) / (1000 * 60);
 
     if (elapsedMinutes >= 15) {
-      return { allowed: true, text: t("graceExpired") };
+      return { allowed: true, percent: 100, remainingMin: 0, text: t("graceExpired") };
     }
     const remainingMin = Math.max(0, Math.ceil(15 - elapsedMinutes));
+    const percent = Math.min(100, Math.max(0, (elapsedMinutes / 15) * 100));
     return {
       allowed: false,
-      text: `${t("gracePeriodRemaining")} ${remainingMin} ${isRtl ? "دقيقة" : "min"}`,
+      percent,
+      remainingMin,
+      text: `${t("gracePeriodRemaining")} ${remainingMin} ${isRtl ? "د" : "m"}`,
     };
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <TopNav user={{ id: "doctor", role: "DOCTOR", fullNameAr: "د. طارق عبد العزيز", fullNameEn: "Dr. Tarek Abdel Aziz" }} />
+    <div className="min-h-screen flex flex-col bg-background pb-12">
+      <TopNav user={{ id: "doctor", role: "DOCTOR", fullNameAr: "د. حازم عبد الله الجزار", fullNameEn: "Dr. Hazem El-Gazzar" }} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        {/* Header */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-5">
+        {/* Workstation Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800 border border-purple-200">
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-100 text-cyan-900 border border-cyan-200">
                 {tRoles("DOCTOR")}
               </span>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
                 {t("workspaceTitle")}
               </h1>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {isRtl ? "العيادة تعمل بنظام أولوية الفئات الخاصة (ذوي الهمم والحوامل وكبار السن أولاً)" : "Queue prioritized: Disability, Pregnancy, and Elderly lanes served first"}
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              {isRtl ? "نظام الأولوية الذكي: ذوي الهمم والحوامل وكبار السن في مقدمة الطابور" : "Priority lane active: Disability, Pregnancy, and Elderly patients served first"}
             </p>
           </div>
 
@@ -200,7 +202,7 @@ export default function DoctorQueuePage() {
             <button
               onClick={() => handleCallNext()}
               disabled={actionLoading}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-md hover:bg-primary/90 transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-2.5 min-h-[44px] rounded-full bg-primary text-primary-foreground font-bold text-xs shadow-xs hover:bg-primary/90 transition-all cursor-pointer active:scale-95"
             >
               <PhoneCall className="w-4 h-4" />
               <span>{t("callNext")} (#{waitingQueue[0]?.queueNo})</span>
@@ -210,14 +212,14 @@ export default function DoctorQueuePage() {
 
         {message && (
           <div
-            className={`p-3.5 rounded-xl border text-xs flex items-center gap-2 ${
+            className={`p-3.5 rounded-xl border text-xs font-semibold flex items-center gap-2 ${
               message.type === "success"
-                ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+                ? "bg-teal-50 border-teal-200 text-teal-900"
                 : "bg-destructive/10 border-destructive/20 text-destructive"
             }`}
           >
             {message.type === "success" ? (
-              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-teal-600" />
             ) : (
               <AlertTriangle className="w-4 h-4 shrink-0" />
             )}
@@ -226,68 +228,109 @@ export default function DoctorQueuePage() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-          {/* Active Consultation Section */}
+          {/* Active Consultation Workstation Card */}
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-card rounded-2xl border-2 border-primary/30 p-6 shadow-sm space-y-4">
+            <div className="bg-card rounded-3xl border border-border p-6 sm:p-7 shadow-xs space-y-5">
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <div className="flex items-center gap-2">
-                  <Stethoscope className="w-5 h-5 text-primary" />
+                  <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                    <Stethoscope className="w-4 h-4" />
+                  </div>
                   <h2 className="font-bold text-base text-foreground">
                     {t("activeConsultation")}
                   </h2>
                 </div>
 
                 {activePatient && (
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-200 animate-pulse">
-                    قيد الكشف الآن (#{activePatient.queueNo})
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200 animate-pulse font-mono tabular-nums">
+                    #{activePatient.queueNo} {isRtl ? "قيد الكشف" : "In Progress"}
                   </span>
                 )}
               </div>
 
               {activePatient ? (
                 <div className="space-y-4">
-                  {/* Patient Bio Box */}
-                  <div className="p-4 rounded-xl bg-muted/40 border border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="space-y-1">
+                  {/* Patient Bio & Priority Banner */}
+                  <div className="p-4 rounded-2xl bg-secondary/40 border border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="space-y-1.5">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-lg text-foreground">
                           {isRtl ? activePatient.patient.fullNameAr : activePatient.patient.fullNameEn}
                         </span>
                         {activePatient.priorityLane !== "NONE" && (
-                          <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800">
+                          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-accent/20 text-accent-foreground border border-accent/30">
                             {tPriority(activePatient.priorityLane)}
                           </span>
                         )}
                       </div>
 
                       <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                        <span className="font-mono">
+                        <span className="font-mono tabular-nums font-semibold">
                           {activePatient.patient.nationalId}
                         </span>
                         <span>•</span>
-                        <span>{activePatient.patient.gender === "MALE" ? "ذكر" : "أنثى"}</span>
+                        <span>{activePatient.patient.gender === "MALE" ? (isRtl ? "ذكر" : "Male") : (isRtl ? "أنثى" : "Female")}</span>
                         <span>•</span>
-                        <span>تذكرة: {activePatient.ticketNo}</span>
+                        <span className="font-mono tabular-nums">{activePatient.ticketNo}</span>
                       </div>
                     </div>
 
-                    <div className="text-end shrink-0">
-                      <span className="text-[11px] text-muted-foreground block">{tCommon("time")}</span>
-                      <span className="font-bold text-sm text-primary font-mono">
-                        {new Date(activePatient.slot.startsAt).toLocaleTimeString(isRtl ? "ar-EG" : "en-US", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
+                    {/* Circular Countdown Grace Ring */}
+                    {(() => {
+                      const grace = getGraceStatus(activePatient.slot.startsAt);
+                      const strokeDash = 2 * Math.PI * 18;
+                      const strokeOffset = strokeDash - (strokeDash * grace.percent) / 100;
+                      return (
+                        <div className="flex items-center gap-3 shrink-0 bg-card p-2.5 rounded-2xl border border-border">
+                          <div className="relative w-11 h-11 flex items-center justify-center">
+                            <svg className="w-11 h-11 transform -rotate-90">
+                              <circle
+                                cx="22"
+                                cy="22"
+                                r="18"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                className="text-secondary"
+                                fill="transparent"
+                              />
+                              <circle
+                                cx="22"
+                                cy="22"
+                                r="18"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                strokeDasharray={strokeDash}
+                                strokeDashoffset={strokeOffset}
+                                strokeLinecap="round"
+                                className={`transition-all duration-500 ${
+                                  grace.allowed ? "text-destructive" : grace.percent > 60 ? "text-amber-500" : "text-primary"
+                                }`}
+                                fill="transparent"
+                              />
+                            </svg>
+                            <span className="absolute text-[10px] font-mono font-bold tabular-nums">
+                              {grace.remainingMin}m
+                            </span>
+                          </div>
+                          <div className="text-start">
+                            <span className="text-[10px] text-muted-foreground block font-medium">
+                              {isRtl ? "مهلة الحضور" : "Grace Period"}
+                            </span>
+                            <span className="text-[11px] font-bold text-foreground">
+                              {grace.allowed ? (isRtl ? "انتهت المهلة" : "Expired") : `${grace.remainingMin} ${isRtl ? "دقيقة متبقية" : "min left"}`}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
 
-                  {/* Outcome Note Editor with 280 Char Limit */}
+                  {/* Outcome Note Editor (<= 280 chars) */}
                   <div className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs font-semibold text-foreground">
+                    <div className="flex items-center justify-between text-xs font-bold text-foreground">
                       <label>{t("consultationNote")}</label>
                       <span
-                        className={`font-mono text-[11px] ${
+                        className={`font-mono text-[11px] tabular-nums ${
                           outcomeNote.length > 250
                             ? "text-destructive font-bold"
                             : "text-muted-foreground"
@@ -302,37 +345,31 @@ export default function DoctorQueuePage() {
                       maxLength={280}
                       value={outcomeNote}
                       onChange={(e) => setOutcomeNote(e.target.value)}
-                      placeholder={isRtl ? "اكتب التشخيص والتوجيهات الطبية للمريض والعلاج المصروف..." : "Enter diagnosis and outcome notes..."}
-                      className="w-full p-3 rounded-xl border border-input bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/30 leading-relaxed resize-none"
+                      placeholder={isRtl ? "اكتب التشخيص والتوجيهات الطبية والعلاج المصروف للمريض..." : "Enter medical diagnosis and recommendations..."}
+                      className="w-full p-3.5 rounded-2xl border border-input bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed resize-none"
                     />
                   </div>
 
-                  {/* Action Buttons */}
+                  {/* Doctor Action Buttons */}
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                    {/* No-Show Button with Grace Period Check */}
                     {(() => {
                       const grace = getGraceStatus(activePatient.slot.startsAt);
                       return (
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleMarkNoShow(activePatient.id)}
-                            disabled={actionLoading || !grace.allowed}
-                            className="px-3.5 py-2 rounded-xl border border-destructive/30 text-destructive text-xs font-semibold hover:bg-destructive/10 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
-                          >
-                            <UserX className="w-3.5 h-3.5" />
-                            <span>{t("markNoShow")}</span>
-                          </button>
-                          <span className="text-[10px] text-muted-foreground hidden sm:inline">
-                            {grace.text}
-                          </span>
-                        </div>
+                        <button
+                          onClick={() => handleMarkNoShow(activePatient.id)}
+                          disabled={actionLoading || !grace.allowed}
+                          className="px-4 py-2.5 min-h-[44px] rounded-full border border-destructive/30 text-destructive text-xs font-bold hover:bg-destructive/10 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 active:scale-95"
+                        >
+                          <UserX className="w-4 h-4" />
+                          <span>{t("markNoShow")}</span>
+                        </button>
                       );
                     })()}
 
                     <button
                       onClick={handleComplete}
                       disabled={actionLoading}
-                      className="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold shadow-md hover:bg-primary/90 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      className="px-7 py-2.5 min-h-[44px] rounded-full bg-primary text-primary-foreground text-xs font-bold shadow-xs hover:bg-primary/90 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95"
                     >
                       <CheckCircle2 className="w-4 h-4" />
                       <span>{t("markCompleted")}</span>
@@ -340,12 +377,12 @@ export default function DoctorQueuePage() {
                   </div>
                 </div>
               ) : (
-                <div className="py-12 text-center text-xs text-muted-foreground space-y-2">
-                  <p>{isRtl ? "لا يوجد مريض قيد الكشف حالياً." : "No patient currently inside examination room."}</p>
+                <div className="py-16 text-center text-xs text-muted-foreground space-y-3">
+                  <p className="text-sm font-medium">{isRtl ? "لا يوجد مريض قيد الكشف حالياً." : "No patient currently inside examination room."}</p>
                   {waitingQueue.length > 0 && (
                     <button
                       onClick={() => handleCallNext()}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline cursor-pointer"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-full bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 transition-all cursor-pointer active:scale-95"
                     >
                       <span>{t("callNext")} (#{waitingQueue[0]?.queueNo})</span>
                       <ArrowIcon className="w-3.5 h-3.5" />
@@ -356,69 +393,63 @@ export default function DoctorQueuePage() {
             </div>
           </div>
 
-          {/* Ordered Waiting Queue Section */}
+          {/* 1-Column Priority Queue Section */}
           <div className="space-y-4">
-            <div className="bg-card rounded-2xl border border-border p-5 shadow-xs space-y-3">
+            <div className="bg-card rounded-3xl border border-border p-5 shadow-xs space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-border">
                 <h3 className="font-bold text-sm text-foreground">
                   {t("queueList")}
                 </h3>
-                <span className="font-mono text-xs font-bold bg-muted px-2 py-0.5 rounded text-foreground">
+                <span className="font-mono text-xs font-bold bg-secondary px-2.5 py-0.5 rounded-full text-foreground tabular-nums">
                   {waitingQueue.length}
                 </span>
               </div>
 
               {waitingQueue.length > 0 ? (
-                <div className="space-y-2 max-h-[500px] overflow-y-auto">
-                  {waitingQueue.map((appt, idx) => {
-                    const grace = getGraceStatus(appt.slot.startsAt);
-                    return (
-                      <div
-                        key={appt.id}
-                        className={`p-3 rounded-xl border text-xs space-y-1.5 transition-all ${
-                          appt.priorityLane !== "NONE"
-                            ? "bg-purple-50/50 border-purple-200"
-                            : "bg-muted/20 border-border"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-foreground">
-                              {isRtl ? appt.patient.fullNameAr : appt.patient.fullNameEn}
-                            </span>
-                          </div>
-                          <span className="font-mono font-extrabold text-primary">
-                            #{appt.queueNo}
+                <div className="space-y-2 max-h-[520px] overflow-y-auto">
+                  {waitingQueue.map((appt, idx) => (
+                    <div
+                      key={appt.id}
+                      className={`p-3.5 rounded-2xl border text-xs space-y-2 transition-all ${
+                        appt.priorityLane !== "NONE"
+                          ? "bg-accent/10 border-accent/30"
+                          : "bg-secondary/30 border-border"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-foreground">
+                          {isRtl ? appt.patient.fullNameAr : appt.patient.fullNameEn}
+                        </span>
+                        <span className="font-mono font-extrabold text-primary text-sm tabular-nums">
+                          #{appt.queueNo}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                        <span className="font-mono tabular-nums">{appt.ticketNo}</span>
+                        {appt.priorityLane !== "NONE" ? (
+                          <span className="text-[10px] font-bold text-accent-foreground bg-accent/25 px-2 py-0.5 rounded-full">
+                            {tPriority(appt.priorityLane)}
                           </span>
-                        </div>
-
-                        <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                          <span className="font-mono">{appt.ticketNo}</span>
-                          {appt.priorityLane !== "NONE" ? (
-                            <span className="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded">
-                              {tPriority(appt.priorityLane)}
-                            </span>
-                          ) : (
-                            <span>طابور عادي</span>
-                          )}
-                        </div>
-
-                        {/* Call action if no active patient */}
-                        {!activePatient && idx === 0 && (
-                          <button
-                            onClick={() => handleCallNext(appt.id)}
-                            className="w-full mt-2 py-1.5 rounded-lg bg-primary text-primary-foreground font-bold text-[11px] hover:bg-primary/90 flex items-center justify-center gap-1 cursor-pointer"
-                          >
-                            <PhoneCall className="w-3.5 h-3.5" />
-                            <span>{t("callNext")}</span>
-                          </button>
+                        ) : (
+                          <span className="text-muted-foreground">{isRtl ? "طابور عام" : "Standard"}</span>
                         )}
                       </div>
-                    );
-                  })}
+
+                      {!activePatient && idx === 0 && (
+                        <button
+                          onClick={() => handleCallNext(appt.id)}
+                          className="w-full mt-1 py-2 min-h-[38px] rounded-full bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/90 flex items-center justify-center gap-1.5 cursor-pointer active:scale-95"
+                        >
+                          <PhoneCall className="w-3.5 h-3.5" />
+                          <span>{t("callNext")}</span>
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground text-center py-8">
+                <p className="text-xs text-muted-foreground text-center py-10">
                   {isRtl ? "صالة الانتظار فارغة حالياً." : "Waiting queue is empty."}
                 </p>
               )}
