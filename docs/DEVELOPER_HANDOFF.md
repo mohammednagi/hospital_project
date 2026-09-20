@@ -170,3 +170,12 @@ For developers looking to take this graduation-grade prototype to a live MoHP pi
 3. **Waiting Room Live Display:** Build a real-time WebSocket or Server-Sent Events (SSE) display board route (`/[locale]/display/[clinicId]`) for public waiting room monitors.
 4. **Payment Gateway:** Integrate with **Fawry** or **Meeza** for nominal outpatient ticket fees (5–10 EGP).
 5. **Radiology & Lab Attachments:** Expand the Doctor workspace to upload prescriptions and view laboratory test results.
+
+---
+
+## 8. License & Maintainer
+
+- **Developer:** Ahmed Hossam
+- **Target Organization:** Graduation Project from Sherouck Academy
+- **Repository:** [https://github.com/mohammednagi/hospital_project](https://github.com/mohammednagi/hospital_project)
+

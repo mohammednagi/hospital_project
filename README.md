@@ -482,6 +482,6 @@ The visual language follows the **Apple Human Interface Guidelines adapted for E
 
 ## 📄 License & Maintainer
 
-- **Developer / Project Lead:** Mohammed Nagi
-- **Target Organization:** Ministry of Health and Population (MoHP), Arab Republic of Egypt
+- **Developer:** Ahmed Hossam
+- **Target Organization:** Graduation Project from Sherouck Academy
 - **Repository:** [https://github.com/mohammednagi/hospital_project](https://github.com/mohammednagi/hospital_project)
